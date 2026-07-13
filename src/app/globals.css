@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Shell body. Color + background flip with the theme via tokens. */
+body {
+  color: rgb(var(--color-text-hi));
+  background: rgb(var(--color-bg));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom minimal scrollbar — token-driven so it flips with the theme. */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-border));
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-text-low));
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@layer components {
+  /* Bottom-up legibility scrim over full-bleed food photos. Not decorative —
+   * exists so overlaid text stays readable. Token-free black is intentional
+   * (a shadow, not a brand color). */
+  .craving-scrim {
+    background-image: linear-gradient(
+      to top,
+      rgb(0 0 0 / 0.85) 0%,
+      rgb(0 0 0 / 0.45) 34%,
+      rgb(0 0 0 / 0) 62%
+    );
+  }
+
+  /* One confetti piece. Motion + per-piece vars drive it; color comes from a
+   * reward-token utility class (bg-primary/gold/mango/mint/grape). */
+  .confetti-piece {
+    position: absolute;
+    top: -8vh;
+    left: var(--cf-left, 50%);
+    width: 8px;
+    height: 14px;
+    border-radius: 2px;
+    animation: confetti-fall var(--cf-dur, 1.8s) var(--ease-out)
+      var(--cf-delay, 0s) forwards;
+  }
+}

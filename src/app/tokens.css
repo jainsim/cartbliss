@@ -1,0 +1,170 @@
+/* cartbliss "Midnight" — token source of truth (color + motion).
+ *
+ * Two tiers (see DESIGN-midnight.md §2):
+ *   - Primitive: raw brand channels. Consumed by semantic tokens only.
+ *   - Semantic shell (theme-aware): flips light <-> dark. Consumed by components.
+ *   - Semantic reward (constant): loud in both themes. Consumed by components.
+ *
+ * Colors are stored as space-separated RGB channels so Tailwind's alpha syntax
+ * works: `bg-primary/40` -> rgb(var(--color-primary) / 0.4). Never store a hex
+ * or an rgb() wrapper here.
+ *
+ * Scale (spacing, radius, type) does NOT live here — it lives in
+ * tailwind.config.ts. This file is color + motion only.
+ */
+
+:root {
+  /* --- Primitive (consumed by semantic tokens only) --- */
+  --p-rausch: 255 56 92;
+  --p-gold: 255 210 76;
+  --p-mango: 255 184 0;
+  --p-mint: 0 196 140;
+  --p-grape: 124 77 255;
+
+  /* --- Semantic shell — LIGHT (default) --- */
+  --color-bg: 255 255 255;
+  --color-surface: 247 247 247;
+  --color-surface-elevated: 255 255 255;
+  --color-border: 235 235 235;
+  --color-text-hi: 34 34 34;
+  --color-text-mid: 106 106 106;
+  --color-text-low: 146 146 146;
+  --elevation-card:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 2px 8px rgb(0 0 0 / 0.06);
+
+  /* --- Semantic reward — CONSTANT across themes --- */
+  --color-primary: var(--p-rausch);
+  --color-reward-gold: var(--p-gold);
+  --color-accent-mango: var(--p-mango);
+  --color-accent-mint: var(--p-mint);
+  --color-accent-grape: var(--p-grape);
+  --glow-primary: 0 8px 30px rgb(var(--color-primary) / 0.35);
+
+  /* --- Motion (durations + easings; keyframes below) --- */
+  --dur-pop: 0.2s;
+  --dur-burst: 0.6s;
+  --dur-tick: 0.4s;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Dark shell overrides — shared declarations for explicit + auto dark.
+ * Reward tokens stay constant EXCEPT mint + grape, which lift for contrast
+ * (DESIGN-midnight.md §2). Everything else is identical so the celebration
+ * feels the same in both themes. */
+:root[data-theme="dark"] {
+  --color-bg: 11 11 15;
+  --color-surface: 22 22 29;
+  --color-surface-elevated: 31 31 41;
+  --color-border: 42 42 53;
+  --color-text-hi: 255 255 255;
+  --color-text-mid: 160 160 176;
+  --color-text-low: 92 92 107;
+  --elevation-card: 0 8px 24px rgb(0 0 0 / 0.5);
+
+  --color-accent-mint: 0 224 164; /* #00E0A4 */
+  --color-accent-grape: 139 92 255; /* #8B5CFF */
+  --glow-primary: 0 8px 30px rgb(var(--color-primary) / 0.5);
+}
+
+/* Auto-dark ONLY when the user hasn't made an explicit choice.
+ * data-theme="light" opts out; no attribute means "follow system". */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: 11 11 15;
+    --color-surface: 22 22 29;
+    --color-surface-elevated: 31 31 41;
+    --color-border: 42 42 53;
+    --color-text-hi: 255 255 255;
+    --color-text-mid: 160 160 176;
+    --color-text-low: 92 92 107;
+    --elevation-card: 0 8px 24px rgb(0 0 0 / 0.5);
+
+    --color-accent-mint: 0 224 164;
+    --color-accent-grape: 139 92 255;
+    --glow-primary: 0 8px 30px rgb(var(--color-primary) / 0.5);
+  }
+}
+
+/* --- Motion keyframes (wired to `animate-pop/burst/tick` in tailwind.config) --- */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes tick {
+  0% {
+    transform: translateY(0.35em);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Reward-path confetti. Per-piece drift/rotation come from CSS custom
+ * properties set on the element (never a JS style string / inline color). */
+@keyframes confetti-fall {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--cf-x, 0), var(--cf-y, 100vh))
+      rotate(var(--cf-rot, 360deg));
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-up {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Respect reduced-motion: keep the payoff, drop the kinetics. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
