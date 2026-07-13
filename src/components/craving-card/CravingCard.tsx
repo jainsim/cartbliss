@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Bookmark, Heart, Plus } from "lucide-react";
+import { Bookmark, Heart, Plus, TrendingDown, TrendingUp } from "lucide-react";
 import {
   SIZES,
   SPICES,
@@ -27,24 +27,36 @@ export default function CravingCard({
   const [spice, setSpice] = useState<Spice>("Medium");
   const [toppings, setToppings] = useState<string[]>([]);
   const [price, setPrice] = useState(craving.basePrice);
+  const [dir, setDir] = useState<"up" | "down">("down");
   const [burst, setBurst] = useState(false);
   const lastTap = useRef(0);
 
   const isSaved = saved.includes(craving.id);
 
-  // Melt the price down toward the floor while active.
+  // Live price: a bounded random walk around basePrice while active. Swings both
+  // ways within a realistic band, never zero (DECISIONS §3, revised).
   useEffect(() => {
     if (!active) return;
     setPrice(craving.basePrice);
-    const step = Math.max(1, Math.round(craving.basePrice * 0.04));
+    setDir("down");
+    const low = Math.max(1, Math.round(craving.basePrice * 0.88));
+    const high = Math.round(craving.basePrice * 1.12);
+    const maxStep = Math.max(2, Math.round(craving.basePrice * 0.05));
     const id = window.setInterval(() => {
       setPrice((p) => {
-        const next = p - step;
-        return next <= craving.floor ? craving.floor : next;
+        // Always move at least ₹1, either direction, within the band.
+        let delta = Math.round((Math.random() * 2 - 1) * maxStep);
+        if (delta === 0) delta = Math.random() < 0.5 ? -1 : 1;
+        let next = p + delta;
+        if (next < low) next = low;
+        if (next > high) next = high;
+        if (next === p) next = p === high ? p - 1 : p + 1; // avoid stalling at a bound
+        setDir(next > p ? "up" : "down");
+        return next;
       });
-    }, 650);
+    }, 900);
     return () => window.clearInterval(id);
-  }, [active, craving.basePrice, craving.floor]);
+  }, [active, craving.basePrice]);
 
   const toggleTopping = (t: string) =>
     setToppings((prev) =>
@@ -122,7 +134,7 @@ export default function CravingCard({
           <p className="text-base text-white/80">{craving.tagline}</p>
         </div>
 
-        {/* Melting price */}
+        {/* Live fluctuating price — swings within a band, never zero */}
         <div className="flex items-end gap-sm">
           <span
             key={price}
@@ -131,12 +143,20 @@ export default function CravingCard({
           >
             {currency(price)}
           </span>
-          {price < craving.basePrice && (
-            <span className="pb-xs text-base text-white/50 line-through">
-              {currency(craving.basePrice)}
-            </span>
-          )}
-          <span className="pb-xs text-sm text-mint">melting… 🫠</span>
+          <span
+            className={
+              dir === "up"
+                ? "flex items-center gap-xxs pb-xs text-sm font-semibold text-primary"
+                : "flex items-center gap-xxs pb-xs text-sm font-semibold text-mint"
+            }
+          >
+            {dir === "up" ? (
+              <TrendingUp size={16} />
+            ) : (
+              <TrendingDown size={16} />
+            )}
+            live price
+          </span>
         </div>
 
         {/* Size */}
