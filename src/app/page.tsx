@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import CravingFeed from "@/components/craving-feed/CravingFeed";
-import BottomNav, { type Tab } from "@/components/bottom-nav/BottomNav";
+import BottomNav from "@/components/bottom-nav/BottomNav";
 import StreakView from "@/components/daily-craving-streak/StreakView";
 import ProfileView from "@/components/profile/ProfileView";
 import CartHoardSheet from "@/components/cart-hoard-sheet/CartHoardSheet";
@@ -10,9 +10,11 @@ import CheckoutOneshot from "@/components/checkout-oneshot/CheckoutOneshot";
 import RewardBurst from "@/components/reward-burst/RewardBurst";
 import AffiliateBridge from "@/components/affiliate-bridge/AffiliateBridge";
 import ToastStack from "@/components/toast/ToastStack";
+import KeyboardShortcuts from "@/components/keyboard-shortcuts/KeyboardShortcuts";
+import { useCart } from "@/context/CartContext";
 
 export default function Home() {
-  const [tab, setTab] = useState<Tab>("feed");
+  const { tab } = useCart();
 
   return (
     <>
@@ -35,7 +37,7 @@ export default function Home() {
         {tab === "profile" && <ProfileView />}
       </main>
 
-      <BottomNav tab={tab} setTab={setTab} />
+      <BottomNav />
 
       {/* Overlays */}
       <CartHoardSheet />
@@ -43,6 +45,7 @@ export default function Home() {
       <RewardBurst />
       <AffiliateBridge />
       <ToastStack />
+      <KeyboardShortcuts />
     </>
   );
 }

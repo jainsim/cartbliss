@@ -22,7 +22,7 @@ export default function CravingCard({
   craving: Craving;
   active: boolean;
 }) {
-  const { addItem, saved, toggleSaved } = useCart();
+  const { addItem, saved, toggleSaved, activeCardApi } = useCart();
   const [size, setSize] = useState<Size>("Regular");
   const [spice, setSpice] = useState<Spice>("Medium");
   const [toppings, setToppings] = useState<string[]>([]);
@@ -74,6 +74,22 @@ export default function CravingCard({
       toppings,
     });
   };
+
+  // Expose the current card's actions to keyboard shortcuts while it's active.
+  // A ref keeps `add` pointed at the latest price/selection without re-registering.
+  const doAddRef = useRef(doAdd);
+  doAddRef.current = doAdd;
+  useEffect(() => {
+    if (!active) return;
+    const api = {
+      add: () => doAddRef.current(),
+      toggleSave: () => toggleSaved(craving.id),
+    };
+    activeCardApi.current = api;
+    return () => {
+      if (activeCardApi.current === api) activeCardApi.current = null;
+    };
+  }, [active, craving.id, activeCardApi, toggleSaved]);
 
   const handleTap = () => {
     const now = Date.now();

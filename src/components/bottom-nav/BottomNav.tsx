@@ -4,18 +4,10 @@ import React from "react";
 import { Flame, Home, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
-export type Tab = "feed" | "streak" | "profile";
-
 /** Bottom tab bar (thumb zone). Cart is not a view — it opens the hoard sheet
- *  (DECISIONS §3). */
-export default function BottomNav({
-  tab,
-  setTab,
-}: {
-  tab: Tab;
-  setTab: (t: Tab) => void;
-}) {
-  const { cartCount, setHoardOpen, streak } = useCart();
+ *  (DECISIONS §3). Tab state is lifted to context so keyboard shortcuts share it. */
+export default function BottomNav() {
+  const { cartCount, setHoardOpen, streak, tab, setTab } = useCart();
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-nav flex items-stretch justify-around border-t border-border bg-surface-elevated pb-xs">

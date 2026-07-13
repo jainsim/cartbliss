@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { CRAVINGS, PAIRINGS, type Size, type Spice } from "@/data/cravings";
@@ -36,6 +37,12 @@ export type AddPayload = {
 
 export type Surprise = null | "mystery" | "double" | "gold" | "streak";
 
+export type Tab = "feed" | "streak" | "profile";
+
+// Imperative handle the active craving-card registers so keyboard shortcuts can
+// act on it with its live price + current customization.
+export type CardApi = { add: () => void; toggleSave: () => void };
+
 interface Streak {
   count: number;
   lastHit: string | null; // ISO date (YYYY-MM-DD)
@@ -50,6 +57,11 @@ interface Toast {
 interface AppState {
   // catalog
   cravings: typeof CRAVINGS;
+  // active tab (lifted so keyboard shortcuts can switch it)
+  tab: Tab;
+  setTab: (t: Tab) => void;
+  // the focused craving-card's imperative handle (add / save)
+  activeCardApi: React.MutableRefObject<CardApi | null>;
   // cart / hoard
   cart: CartItem[];
   cartCount: number;
@@ -139,6 +151,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const [saved, setSaved] = useState<string[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [tab, setTab] = useState<Tab>("feed");
+  const activeCardApi = useRef<CardApi | null>(null);
 
   // Hydrate persisted state after mount (avoids SSR mismatch).
   useEffect(() => {
@@ -282,6 +296,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const value = useMemo<AppState>(
     () => ({
       cravings: CRAVINGS,
+      tab,
+      setTab,
+      activeCardApi,
       cart,
       cartCount,
       cartTotal,
@@ -309,6 +326,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       pushToast,
     }),
     [
+      tab,
       cart,
       cartCount,
       cartTotal,
