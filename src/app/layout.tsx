@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "cartbliss — order the craving, skip the bill",
+  title: "chaska — order the craving, skip the bill",
   description:
     "Bhookh lagi? 🌙 A dopamine food-ordering fantasy. Hoard desi snacks, check out for ₹0, get the reward. No real money moves.",
 };

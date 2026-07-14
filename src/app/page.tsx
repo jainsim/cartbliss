@@ -24,7 +24,7 @@ export default function Home() {
             {/* Top brand bar over the feed */}
             <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-center justify-between bg-gradient-to-b from-black/50 to-transparent p-lg pb-xl">
               <span className="text-lg font-extrabold text-white">
-                cartbliss 🌙
+                chaska 🌙
               </span>
               <span className="text-sm font-medium text-white/80">
                 double-tap to add 🤤
