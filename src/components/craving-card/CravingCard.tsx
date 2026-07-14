@@ -171,13 +171,15 @@ export default function CravingCard({
           </button>
         </div>
 
-        <button
-          type="button"
-          onClick={doAdd}
-          className="flex min-h-cta items-center justify-center gap-sm rounded-full bg-primary text-lg font-bold text-white shadow-glow active:animate-pop"
-        >
-          <Plus size={22} /> Add to Cart
-        </button>
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={doAdd}
+            className="flex items-center justify-center gap-sm px-xl py-md rounded-full bg-primary text-lg font-bold text-white shadow-glow active:animate-pop"
+          >
+            <Plus size={22} /> ADD
+          </button>
+        </div>
       </div>
 
       {/* Toppings Drawer */}
