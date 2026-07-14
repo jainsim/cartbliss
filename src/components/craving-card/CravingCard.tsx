@@ -137,13 +137,21 @@ export default function CravingCard({
           </div>
 
           {/* Spice */}
-          <div className="flex flex-col gap-sm">
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Spice Level</span>
-            <div className="flex gap-sm flex-wrap">
+          <div className="flex flex-col gap-xs">
+            <span className="text-xs font-semibold uppercase tracking-wider text-white/60">Spice Level</span>
+            <div className="flex gap-xs flex-wrap">
               {SPICES.map((s) => (
-                <Chip key={s} selected={spice === s} onClick={() => setSpice(s)}>
+                <button
+                  key={s}
+                  onClick={() => setSpice(s)}
+                  className={
+                    spice === s
+                      ? "rounded-full border border-primary bg-primary/20 px-3 py-1.5 text-xs font-medium text-white active:animate-pop"
+                      : "rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/60 backdrop-blur active:animate-pop hover:text-white/80"
+                  }
+                >
                   {s}
-                </Chip>
+                </button>
               ))}
             </div>
           </div>
