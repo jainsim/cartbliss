@@ -113,65 +113,69 @@ export default function CravingCard({
         <Bookmark size={20} className={isSaved ? "fill-white" : ""} />
       </button>
 
-      <div className="absolute inset-x-0 bottom-0 z-30 flex flex-col gap-md p-lg pb-40 max-h-[65vh] overflow-y-auto">
-        <div className="flex flex-col gap-xxs">
-          <h2 className="text-3xl font-bold text-white">{craving.name}</h2>
-          <p className="text-base text-white/80">{craving.tagline}</p>
-        </div>
+      <div className="absolute inset-x-0 bottom-0 z-30 flex flex-col">
+        <div className="flex-1 overflow-y-auto p-lg pb-md">
+          <div className="flex flex-col gap-md">
+            <div className="flex flex-col gap-xxs">
+              <h2 className="text-3xl font-bold text-white">{craving.name}</h2>
+              <p className="text-base text-white/80">{craving.tagline}</p>
+            </div>
 
-        <div className="text-4xl font-extrabold text-gold">
-          {currency(price)}
-        </div>
+            <div className="text-4xl font-extrabold text-gold">
+              {currency(price)}
+            </div>
 
-        <div className="flex flex-col gap-md">
-          {/* Size */}
-          <div className="flex flex-col gap-sm">
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Size</span>
-            <div className="flex gap-sm flex-wrap">
-              {SIZES.map((s) => (
-                <Chip key={s} selected={size === s} onClick={() => setSize(s)}>
-                  {s}
-                </Chip>
-              ))}
+            <div className="flex flex-col gap-md">
+              {/* Size */}
+              <div className="flex flex-col gap-sm">
+                <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Size</span>
+                <div className="flex gap-sm flex-wrap">
+                  {SIZES.map((s) => (
+                    <Chip key={s} selected={size === s} onClick={() => setSize(s)}>
+                      {s}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
+
+              {/* Spice */}
+              <div className="flex flex-col gap-xs">
+                <span className="text-xs font-semibold uppercase tracking-wider text-white/60">Spice Level</span>
+                <div className="flex gap-xs flex-wrap">
+                  {SPICES.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setSpice(s)}
+                      className={
+                        spice === s
+                          ? "rounded-full border border-primary bg-primary/20 px-3 py-1.5 text-xs font-medium text-white active:animate-pop"
+                          : "rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/60 backdrop-blur active:animate-pop hover:text-white/80"
+                      }
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Extras */}
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(true)}
+                className="rounded-full border border-white/40 bg-white/10 px-base py-sm text-sm font-medium text-white backdrop-blur active:animate-pop text-left flex items-center gap-sm"
+              >
+                Customize Extras
+                {toppings.length > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center w-6 h-6 bg-mint text-dark text-xs font-bold rounded-full">
+                    {toppings.length}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
-
-          {/* Spice */}
-          <div className="flex flex-col gap-xs">
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/60">Spice Level</span>
-            <div className="flex gap-xs flex-wrap">
-              {SPICES.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSpice(s)}
-                  className={
-                    spice === s
-                      ? "rounded-full border border-primary bg-primary/20 px-3 py-1.5 text-xs font-medium text-white active:animate-pop"
-                      : "rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/60 backdrop-blur active:animate-pop hover:text-white/80"
-                  }
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Extras */}
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            className="rounded-full border border-white/40 bg-white/10 px-base py-sm text-sm font-medium text-white backdrop-blur active:animate-pop text-left flex items-center gap-sm"
-          >
-            Customize Extras
-            {toppings.length > 0 && (
-              <span className="ml-auto inline-flex items-center justify-center w-6 h-6 bg-mint text-dark text-xs font-bold rounded-full">
-                {toppings.length}
-              </span>
-            )}
-          </button>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center p-lg pt-md border-t border-white/10 bg-black/50 backdrop-blur">
           <button
             type="button"
             onClick={doAdd}
