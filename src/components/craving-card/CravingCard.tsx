@@ -113,7 +113,7 @@ export default function CravingCard({
         <Bookmark size={20} className={isSaved ? "fill-white" : ""} />
       </button>
 
-      <div className="absolute inset-x-0 bottom-0 z-30 flex flex-col gap-md p-lg pb-32">
+      <div className="absolute inset-x-0 bottom-0 z-30 flex flex-col gap-md p-lg pb-40 max-h-[65vh] overflow-y-auto">
         <div className="flex flex-col gap-xxs">
           <h2 className="text-3xl font-bold text-white">{craving.name}</h2>
           <p className="text-base text-white/80">{craving.tagline}</p>
